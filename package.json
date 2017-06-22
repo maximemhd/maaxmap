@@ -1,0 +1,29 @@
+{
+  "name": "maaxmap",
+  "version": "1.0.0",
+  "description": "Electron app to display several maps and visualize gpx.",
+  "main": "main.js",
+  "author": "Maxime Marchand",
+  "scripts": {
+    "start": "electron .",
+  "pack": "build --dir",
+  "dist": "build"
+
+  },
+  "author": "Maax",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "^1.4.1"
+  },
+  "dependencies": {
+    "electron-debug": "^1.0.0"
+
+  },
+  "build": {
+  "appId": "1994",
+  "mac": {
+    "category": "mapviewer"
+  }
+}
+
+}

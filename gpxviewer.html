@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8' />
+    <title></title>
+    <link rel="stylesheet" href="css/photon.min.css">
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='leaflet-omnivore.min.js'></script>
+    <script src='https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.js'></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        
+        #map {
+            position: absolute;
+            top: 32px;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+    <link href='https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.css' rel='stylesheet' />
+</head>
+
+<body>
+    <header class="toolbar toolbar-header">
+        <div class="toolbar-actions">
+            <div class="btn-group">
+                <button class="btn btn-mini" id="close-btn">
+       <span class="icon icon-record" style="color:#fc605b"></span>
+     </button>
+                <button class="btn btn-mini" id="min-btn">
+       <span class="icon icon-record" style="color:#fdbc40"></span>
+     </button>
+                <button class="btn btn-mini" id="max-btn">
+    <span class="icon icon-record" style="color:#34c84a"></span>
+     </button>
+            </div>
+            <button class="btn btn-default" onclick="open_explorer_map();">
+      <span class="icon icon-folder"></span>
+    </button>
+            <div class="btn-group pull-right">
+                <a href="index.html"><button class="btn btn-default" id="close-btn">
+     <span class="icon icon-map icon-text" style="color:#fc605b"></span>Mapbox
+   </button></a>
+                <a href="geoportail.html"><button  class="btn btn-default" id="min-btn">
+     <span  class="icon icon-map icon-text" style="color:#fdbc40"></span>Geoportail
+   </button></a>
+                <a href="orienteering.html"><button class="btn btn-default" id="max-btn">
+  <span class="icon icon-map icon-text" style="color:#34c84a"></span>Orienteering
+  </button></a>
+                <a href="gpxviewer.html"><button class="btn btn-default" id="max-btn">
+<span class="icon icon-map icon-text" style="color:#34c84a"></span>GPX viewer
+</button></a>
+            </div>
+
+    </header>
+    <div id='map'></div>
+    <script>
+        L.mapbox.accessToken = 'pk.eyJ1IjoibWF4aW1lbWhkIiwiYSI6ImNpengxNml1ejAwMTMyd2x1bG44MGZlcjAifQ.-iUdgy0tRNYpd5q1fGqVtQ';
+        var map = L.mapbox.map('map', 'mapbox.light').setView([48.866667, 2.333333], 8);
+        //L.mapbox.styleLayer('mapbox://styles/maximemhd/cizx6e6d200672ro4l016rc0n').addTo(map);
+        map.addControl(L.mapbox.legendControl());
+    </script>
+    <script src="function.js"></script>
+
+</body>
+
+</html>
