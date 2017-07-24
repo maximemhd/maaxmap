@@ -6,6 +6,7 @@ const {
     webContents
 } = require('electron').remote
 const fs = require('fs');
+const async = require('async');
 
 document.getElementById("min-btn").addEventListener("click", function(e) {
     var window = remote.getCurrentWindow();
@@ -25,6 +26,95 @@ document.getElementById("close-btn").addEventListener("click", function(e) {
     var window = remote.getCurrentWindow();
     window.close();
 });
+
+var strava = require('strava-v3');
+
+function strava_login(){
+  strava.athlete.get({},function(err,payload,limits) {
+      //do something with your payload, track rate limits
+      if(!err) {
+          console.log(payload);
+          strava.athletes.stats({id:payload.id},function(err,payloadstats,limits) {
+              if(!err) {
+                  //console.log(payload);
+                  //console.log(payload.all_ride_totals);
+                  var nbr_activities = payloadstats.all_ride_totals.count + payloadstats.all_run_totals.count;
+                  console.log(nbr_activities);
+                  get_all_activities(nbr_activities);
+              }
+              else {
+                  console.log(err);
+              }
+          });
+      }
+      else {
+          console.log(err);
+      }
+  });
+}
+
+
+function get_all_activities(nbr_activities){
+    var nbr_pages = parseInt(nbr_activities/50)+1;
+    var activities = [] ;
+    async.times(nbr_pages, function(i, next){
+      //console.log(i);
+      strava.athlete.listActivities({ 'page':i
+        , 'per_page':50},function(err,payload,limits) { //200
+          //do something with your payload, track rate limits
+          if(!err) {
+            //console.log(payload);
+              for(var j=0; j<payload.length; j++){
+                  activities[j+i*50] = payload[j].id; //200
+              }
+               next(err);
+          }
+          else {
+              console.log(err);
+          }
+      });
+      },
+      function (err) {
+          // Here when all four calls are done
+        console.log(activities);
+        draw_all_activities(activities);
+  });
+}
+
+function draw_all_activities(activities){
+/*  var Datastore = require('nedb'), dbdata = new Datastore({ filename: 'datadb' });
+  var Datastore = require('nedb'), dbid = new Datastore({ filename: 'iddb' });
+  dbdata.loadDatabase(function (err) {    // Callback is optional
+    // Now commands will be executed
+    dbdata.find({}, function (err, docs) {
+        var polyline = L.polyline(docs, {color: 'rgb(119, 177, 214)'}).addTo(map);
+});
+
+  });
+  dbid.loadDatabase(function (err) {    // Callback is optional
+    // Now commands will be executed
+  });*/
+  for (var i = 0; i<activities.length; i++){
+    strava.streams.activity({id:activities[i],types:"latlng"},function(err,payload,limits) {
+        //do something with your payload, track rate limits
+        if(!err) {
+            console.log(payload);
+            var polyline = L.polyline(payload[0].data, {color: 'rgb(119, 177, 214)'}).addTo(map);
+          /*  dbdata.insert(payload[0].data, function (err, newDoc) {   // Callback is optional
+            // newDoc is the newly inserted document, including its _id
+            // newDoc has no key called notToBeSaved since its value was undefined
+            });
+            dbid.insert(activities[i], function (err, newDoc) {   // Callback is optional
+            // newDoc is the newly inserted document, including its _id
+            // newDoc has no key called notToBeSaved since its value was undefined
+          });*/
+        }
+        else {
+            console.log(err);
+        }
+    });
+  }
+}
 
 function open_explorer_map() {
     var files = [];
