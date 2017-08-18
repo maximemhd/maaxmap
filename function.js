@@ -105,10 +105,10 @@ function display_polylines(polylines){
     if(polylines[i].line){
       var trace = decodePolyline.decode(polylines[i].line);
       if(polylines[i].type == "Run"){
-        var polyline = L.polyline(trace, {color: 'rgb(119, 177, 214)'}).addTo(map);
+        var polyline = L.polyline(trace, {color: 'rgb(119, 177, 214)', dashArray: [1,4]}).addTo(map);
       }
       else{
-        var polyline = L.polyline(trace, {color: 'rgb(155, 119, 214)'}).addTo(map);
+        var polyline = L.polyline(trace, {color: 'rgb(155, 119, 214)',dashArray: [1,4]}).addTo(map);
       }
 
     }
@@ -118,32 +118,13 @@ function display_polylines(polylines){
 }
 
 function draw_all_activities(activities){
-/*  var Datastore = require('nedb'), dbdata = new Datastore({ filename: 'datadb' });
-  var Datastore = require('nedb'), dbid = new Datastore({ filename: 'iddb' });
-  dbdata.loadDatabase(function (err) {    // Callback is optional
-    // Now commands will be executed
-    dbdata.find({}, function (err, docs) {
-        var polyline = L.polyline(docs, {color: 'rgb(119, 177, 214)'}).addTo(map);
-});
 
-  });
-  dbid.loadDatabase(function (err) {    // Callback is optional
-    // Now commands will be executed
-  });*/
   for (var i = 0; i<activities.length; i++){
     strava.streams.activity({id:activities[i],types:"latlng"},function(err,payload,limits) {
         //do something with your payload, track rate limits
         if(!err) {
             console.log(payload);
             var polyline = L.polyline(payload[0].data, {color: 'rgb(119, 177, 214)'}).addTo(map);
-          /*  dbdata.insert(payload[0].data, function (err, newDoc) {   // Callback is optional
-            // newDoc is the newly inserted document, including its _id
-            // newDoc has no key called notToBeSaved since its value was undefined
-            });
-            dbid.insert(activities[i], function (err, newDoc) {   // Callback is optional
-            // newDoc is the newly inserted document, including its _id
-            // newDoc has no key called notToBeSaved since its value was undefined
-          });*/
         }
         else {
             console.log(err);
