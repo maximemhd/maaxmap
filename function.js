@@ -36,7 +36,7 @@ function strava_login(){
           console.log(payload);
           strava.athletes.stats({id:payload.id},function(err,payloadstats,limits) {
               if(!err) {
-                  //console.log(payload);
+                  console.log(payload);
                   //console.log(payload.all_ride_totals);
                   var nbr_activities = payloadstats.all_ride_totals.count + payloadstats.all_run_totals.count;
                   console.log(nbr_activities);
@@ -54,18 +54,31 @@ function strava_login(){
 }
 
 
+
 function get_all_activities(nbr_activities){
-    var nbr_pages = parseInt(nbr_activities/50)+1;
-    var activities = [] ;
+    var nbr_pages = parseInt(nbr_activities/200)+1;
+    console.log(nbr_pages);
+    //var total = 0;
+    var per_page = 200;
+  //  var activities = [] ;
+   var polylines = [] ;
     async.times(nbr_pages, function(i, next){
-      //console.log(i);
+      console.log(i);
+      if(i==nbr_pages-1){
+        per_page = nbr_activities - (i)*per_page;
+      }
       strava.athlete.listActivities({ 'page':i
-        , 'per_page':50},function(err,payload,limits) { //200
+        , 'per_page':per_page},function(err,payload,limits) { //200
           //do something with your payload, track rate limits
           if(!err) {
             //console.log(payload);
               for(var j=0; j<payload.length; j++){
-                  activities[j+i*50] = payload[j].id; //200
+                //  activities[j+i*200] = payload[j].id; //200
+                polylines[j+i*200] = {
+                  'line': payload[j].map.summary_polyline, //200
+                  'type': payload[j].type
+                }
+                //  total++; //debug
               }
                next(err);
           }
@@ -76,9 +89,32 @@ function get_all_activities(nbr_activities){
       },
       function (err) {
           // Here when all four calls are done
-        console.log(activities);
-        draw_all_activities(activities);
+        //console.log(activities);
+        //console.log(total);
+        //draw_all_activities(activities);
+        display_polylines(polylines);
   });
+}
+var decodePolyline = require('@mapbox/polyline');
+
+function display_polylines(polylines){
+
+  for (var i = 0; i<polylines.length; i++){
+
+    // returns an array of lat, lon pairs
+    if(polylines[i].line){
+      var trace = decodePolyline.decode(polylines[i].line);
+      if(polylines[i].type == "Run"){
+        var polyline = L.polyline(trace, {color: 'rgb(119, 177, 214)'}).addTo(map);
+      }
+      else{
+        var polyline = L.polyline(trace, {color: 'rgb(155, 119, 214)'}).addTo(map);
+      }
+
+    }
+
+
+  }
 }
 
 function draw_all_activities(activities){
