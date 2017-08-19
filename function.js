@@ -105,10 +105,10 @@ function display_polylines(polylines){
     if(polylines[i].line){
       var trace = decodePolyline.decode(polylines[i].line);
       if(polylines[i].type == "Run"){
-        var polyline = L.polyline(trace, {color: 'rgb(119, 177, 214)', dashArray: [1,4]}).addTo(map);
+        var polyline = L.polyline(trace, {color: 'rgb(119, 177, 214)'}).addTo(map); //, dashArray: [1,4]
       }
       else{
-        var polyline = L.polyline(trace, {color: 'rgb(155, 119, 214)',dashArray: [1,4]}).addTo(map);
+        var polyline = L.polyline(trace, {color: 'rgb(155, 119, 214)'}).addTo(map); //, dashArray: [1,4]
       }
 
     }
